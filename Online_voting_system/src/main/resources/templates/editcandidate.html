@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Candidate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%; /* Make it responsive */
+            max-width: 400px; /* Set a max width */
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #1976d2;
+            font-weight: 600;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 24px; /* Adjust heading size for smaller screens */
+            }
+            button {
+                font-size: 14px; /* Adjust button font size for smaller screens */
+            }
+            input[type="text"], input[type="file"] {
+                font-size: 14px; /* Adjust input font size for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Edit Candidate</h2>
+    <form method="post" action="/admin/updateCandidate" enctype="multipart/form-data" th:object="${candidate}">
+        <input type="hidden" name="id" th:value="${candidate.id}" />
+
+        <label>Candidate Name:</label>
+        <input type="text" name="candidateName" th:value="${candidate.candidateName}" required />
+
+        <label>Party Name:</label>
+        <input type="text" name="partyName" th:value="${candidate.partyName}" required />
+
+        <label>Change Party Symbol (optional):</label>
+        <input type="file" name="partySymbol" accept="image/*" />
+
+        <label>Change Candidate Photo (optional):</label>
+        <input type="file" name="candidatePhoto" accept="image/*" />
+
+        <button type="submit">Update Candidate</button>
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+            margin: 0;
+        }
+
+        .dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        .dark-mode h2 {
+            color: #ccc;
+        }
+
+        form, table, .results-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .dark-mode form,
+        .dark-mode table,
+        .dark-mode .results-section {
+            background: #1e1e1e;
+            color: white;
+        }
+
+        input, button, select {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .dark-mode th,
+        .dark-mode td {
+            border-color: #555;
+        }
+
+        img {
+            width: 60px;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #28a745;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: green;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .switch {
+            cursor: pointer;
+            font-size: 20px;
+            color: #007BFF;
+        }
+
+        @media (max-width: 768px) {
+            .top-buttons {
+                flex-direction: column;
+            }
+
+            form, table, .results-section {
+                padding: 15px;
+            }
+
+            input, button {
+                font-size: 16px;
+            }
+
+            img {
+                width: 40px;
+            }
+
+            h2 {
+                font-size: 20px; /* Adjust heading size for smaller screens */
+            }
+        }
+
+        .logout-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .logout-container form {
+            width: 200px;
+        }
+
+        .logout-container button {
+            background: #dc3545;
+            font-size: 16px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #007BFF;
+        }
+
+        .header .user-info {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            const switchIcon = document.getElementById("modeSwitch");
+            switchIcon.classList.toggle("fa-sun");
+            switchIcon.classList.toggle("fa-moon");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.display = "block";
+            setTimeout(() => { toast.style.display = "none"; }, 3000);
+        }
+
+        function toggleResults() {
+            const resultsTable = document.getElementById("resultsTable");
+            resultsTable.style.display = resultsTable.style.display === "none" ? "table" : "none";
+        }
+    </script>
+</head>
+<body>
+
+<div id="toast" th:if="${toastMessage}" th:text="${toastMessage}" 
+     th:attr="onload=|showToast('${toastMessage}')|"></div>
+
+<div class="header">
+    <h1>Admin Dashboard</h1>
+    <div class="user-info">Welcome, Admin!</div>
+    <div class="switch" title="Toggle Dark Mode" onclick="toggleDarkMode()">
+        <i id="modeSwitch" class="fas fa-sun"></i>
+    </div>
+</div>
+
+<div class="top-buttons">
+    <a href="/admin/voters"><button class="btn btn-secondary">View Voter List</button></a>
+</div>
+
+<h2>Add Candidate</h2>
+<form method="post" action="/admin/addCandidate" enctype="multipart/form-data">
+    <label>Candidate Name:</label>
+    <input type="text" name="candidateName" required>
+
+    <label>Party Name:</label>
+    <input type="text" name="partyName" required>
+
+    <label>Party Symbol Photo:</label>
+    <input type="file" name="partySymbol" accept="image/*" required>
+
+    <label>Candidate Photo:</label>
+    <input type="file" name="candidatePhoto" accept="image/*" required>
+
+    <button type="submit" class="btn">Add Candidate</button>
+</form>
+
+<h2>Election Candidates</h2>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Party</th>
+        <th>Symbol</th>
+        <th>Photo</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="candidate : ${candidates}">
+        <td th:text="${candidate.candidateName}"></td>
+        <td th:text="${candidate.partyName}"></td>
+        <td><img th:src="@{${candidate.partySymbolPath}}" alt="Symbol"></td>
+        <td><img th:src="@{${candidate.candidatePhotoPath}}" alt="Photo"></td>
+        <td>
+            <form method="post" th:action="@{/admin/deleteCandidate}" style="display:inline-block;">
+                <input type="hidden" name="id" th:value="${candidate.id}" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <form method="get" th:action="@{/admin/editCandidate}" style="display:inline-block;">
+                <input type="hidden" name="id" th:value="${candidate.id}" />
+                <button type="submit" class="btn btn-secondary">Edit</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h2>Election Results</h2>
+<button onclick="toggleResults()" class="btn">Show/Hide Results</button>
+
+<table id="resultsTable" class="results-section" style="display: none;">
+    <tr>
+        <th>Name</th>
+        <th>Party</th>
+        <th>Votes</th>
+    </tr>
+    <tr th:each="candidate : ${candidates}">
+        <td th:text="${candidate.candidateName}"></td>
+        <td th:text="${candidate.partyName}"></td>
+        <td th:text="${candidate.voteCount}"></td>
+    </tr>
+</table>
+
+<h2>Admin Analytics</h2>
+<div class="results-section">
+    <p>Total Voters: <span th:text="${totalVoters}"></span></p>
+    <p>Votes Cast: <span th:text="${votesCast}"></span></p>
+</div>
+
+<div class="logout-container">
+    <form method="post" action="/admin/logout" style="text-align: center; margin-top: 20px;">
+        <button type="submit" class="btn">Logout</button>
+    </form>
+</div>
+
+</body>
+</html>

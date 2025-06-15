@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Voting System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background: url('/images/4448.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #f0f0f0;
+            text-align: center;
+            position: relative; /* Added for positioning the button */
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
+            width: 90%;
+            max-width: 450px;
+        }
+        h2 {
+            margin-bottom: 25px;
+            font-size: 30px;
+            color: #ffffff;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #2196F3;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ffffff;
+        }
+        .public-results-button {
+            position: absolute; /* Positioning the button */
+            top: 20px; /* Distance from the top */
+            right: 20px; /* Distance from the right */
+            background-color: #4CAF50; /* Green button color */
+            padding: 8px 12px; /* Reduced padding for smaller button */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            color: white; /* Text color */
+            cursor: pointer; /* Pointer cursor */
+            font-size: 14px; /* Reduced font size */
+            width: 120px; /* Set a specific width for the button */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Transition for hover effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Added shadow for highlighting */
+        }
+        .public-results-button:hover {
+            background-color: #388E3C; /* Darker green shade on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); /* Enhanced shadow on hover */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 24px; /* Adjust heading size for smaller screens */
+            }
+            .container {
+                padding: 30px; /* Adjust padding for smaller screens */
+            }
+            button {
+                font-size: 16px; /* Adjust button font size for smaller screens */
+            }
+            .public-results-button {
+                font-size: 12px; /* Adjust button font size for smaller screens */
+                padding: 6px 10px; /* Adjust padding for smaller screens */
+                width: 100px; /* Adjust width for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<button class="public-results-button" onclick="window.location.href='results'">
+    Public Results
+</button>
+
+<div class="container">
+    <h2>Welcome to the Online Voting System</h2>
+    <button onclick="window.location.href='/voter/login'">
+        <i class="fas fa-user-check icon"></i> Voter Login
+    </button>
+    <button onclick="window.location.href='/admin/login'">
+        <i class="fas fa-user-lock icon"></i> Admin Login
+    </button>
+    <div class="footer">© 2025 All Rights Reserved</div>
+</div>
+
+</body>
+</html>
