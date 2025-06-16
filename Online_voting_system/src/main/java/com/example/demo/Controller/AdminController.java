@@ -2,9 +2,13 @@ package com.example.demo.Controller;
 
 import com.example.demo.Entity.Admin;
 import com.example.demo.Entity.Candidate;
+import com.example.demo.Entity.Voter;
+import com.example.demo.Entity.VotingConfig;
 import com.example.demo.Repository.AdminRepository;
 import com.example.demo.Repository.CandidateRepository;
 import com.example.demo.Repository.VoterRepository;
+import com.example.demo.Repository.VotingConfigRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -26,6 +31,9 @@ public class AdminController {
 
     @Autowired
     private VoterRepository voterRepository;
+
+    @Autowired
+    private VotingConfigRepository votingConfigRepository;
 
     @GetMapping("/admin/login")
     public String showLoginPage() {
@@ -152,4 +160,48 @@ public class AdminController {
         model.addAttribute("voters", voterRepository.findAll());
         return "voterlist";
     }
+
+    // === Voting time configuration ===
+
+    @GetMapping("/admin/votingtime")
+    public String showVotingTimeForm(Model model) {
+        VotingConfig config = votingConfigRepository.findAll().stream().findFirst().orElse(new VotingConfig());
+        model.addAttribute("config", config);
+        return "votingtime";
+    }
+
+    @PostMapping("/admin/votingtime")
+    public String updateVotingTime(@ModelAttribute VotingConfig config) {
+        if (config.getId() == null || config.getId().isEmpty()) {
+            config.setId("votingConfig");
+        }
+        votingConfigRepository.save(config);
+        return "redirect:/admin/votingtime"; // ✅ fixed redirect
+    }
+
+    @PostMapping("/admin/votingtime/delete")
+    public String deleteVotingTime() {
+        votingConfigRepository.deleteAll();
+        return "redirect:/admin/votingtime"; // ✅ fixed redirect
+    }
+    @PostMapping("/admin/resetVotes")
+    public String resetVotes(RedirectAttributes redirectAttributes) {
+        // Reset vote count for all candidates
+        List<Candidate> candidates = candidateRepository.findAll();
+        for (Candidate candidate : candidates) {
+            candidate.setVoteCount(0);
+        }
+        candidateRepository.saveAll(candidates);
+
+        // Reset voting status for all voters
+        List<Voter> voters = voterRepository.findAll();
+        for (Voter voter : voters) {
+            voter.setHasVoted(false);
+        }
+        voterRepository.saveAll(voters);
+
+        redirectAttributes.addFlashAttribute("toastMessage", "Votes and voter status reset successfully.");
+        return "redirect:/admin/dashboard";
+    }
+
 }

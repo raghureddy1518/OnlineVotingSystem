@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Voting Time</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .back-button {
+            text-align: center; /* Center the button */
+            margin-top: 30px; /* Add some space above */
+        }
+
+        .back-button a {
+            background: #007BFF; /* Button background color */
+            color: white; /* Button text color */
+            padding: 10px 15px; /* Button padding */
+            border-radius: 5px; /* Button border radius */
+            text-decoration: none; /* Remove underline */
+            font-size: 16px; /* Button font size */
+            display: inline-block; /* Make it behave like a button */
+            transition: background 0.3s; /* Transition for hover effect */
+        }
+
+        .back-button a:hover {
+            background: #0056b3; /* Darker background on hover */
+        }
+
+        .info-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Set Voting Period</h2>
+
+    <form th:action="@{/admin/votingtime}" th:object="${config}" method="post">
+        <label for="startTime">Start Time:</label>
+        <input type="datetime-local" id="startTime" th:field="*{startTime}" required />
+
+        <label for="endTime">End Time:</label>
+        <input type="datetime-local" id="endTime" th:field="*{endTime}" required />
+
+        <button type="submit">Save</button>
+    </form>
+
+    <form th:action="@{/admin/votingtime/delete}" method="post" style="margin-top: 15px;">
+        <button type="submit">Delete Voting Time</button>
+    </form>
+
+    <div class="info-box" th:if="${config != null and config.startTime != null and config.endTime != null}">
+        <h3>Current Voting Schedule</h3>
+        <p><strong>Start Time:</strong> <span th:text="${#temporals.format(config.startTime, 'yyyy-MM-dd HH:mm')}">Not set</span></p>
+        <p><strong>End Time:</strong> <span th:text="${#temporals.format(config.endTime, 'yyyy-MM-dd HH:mm')}">Not set</span></p>
+    </div>
+
+    <div class="back-button">
+        <a th:href="@{/admin/dashboard}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -2,16 +2,17 @@ package com.example.demo.Controller;
 
 import com.example.demo.Entity.Candidate;
 import com.example.demo.Entity.Voter;
+import com.example.demo.Entity.VotingConfig;
 import com.example.demo.Repository.CandidateRepository;
 import com.example.demo.Repository.VoterRepository;
+import com.example.demo.Repository.VotingConfigRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -23,25 +24,20 @@ public class VoterController {
     @Autowired
     private CandidateRepository candidateRepository;
 
-    @Value("${voting.start}")
-    private String votingStart;
-
-    @Value("${voting.deadline}")
-    private String votingDeadline;
+    @Autowired
+    private VotingConfigRepository votingConfigRepository;
 
     private String getVotingStatus() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        LocalDateTime start = LocalDateTime.parse(votingStart, formatter);
-        LocalDateTime deadline = LocalDateTime.parse(votingDeadline, formatter);
-        LocalDateTime now = LocalDateTime.now();
+        VotingConfig config = votingConfigRepository.findAll().stream().findFirst().orElse(null);
 
-        if (now.isBefore(start)) {
-            return "not_started";
-        } else if (now.isAfter(deadline)) {
-            return "closed";
-        } else {
-            return "open";
+        if (config == null || config.getStartTime() == null || config.getEndTime() == null) {
+            return "not_configured";
         }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(config.getStartTime())) return "not_started";
+        else if (now.isAfter(config.getEndTime())) return "closed";
+        else return "open";
     }
 
     @GetMapping("/voter/login")
@@ -54,15 +50,19 @@ public class VoterController {
                         @RequestParam String password,
                         Model model) {
         Voter voter = voterRepository.findByUsername(username);
-        if (voter != null && voter.getPassword().equals(password)) {
 
+        if (voter != null && voter.getPassword().equals(password)) {
             String status = getVotingStatus();
-            if (status.equals("not_started")) {
+
+            if (status.equals("not_configured")) {
+                model.addAttribute("error", "Voting configuration not set by admin.");
+                return "vote";
+            } else if (status.equals("not_started")) {
                 model.addAttribute("error", "Voting has not started yet.");
-                return "message";
+                return "vote";
             } else if (status.equals("closed")) {
                 model.addAttribute("error", "Voting is closed.");
-                return "message";
+                return "vote";
             }
 
             if (voter.isHasVoted()) {
@@ -106,11 +106,8 @@ public class VoterController {
                            Model model) {
 
         String status = getVotingStatus();
-        if (status.equals("not_started")) {
-            model.addAttribute("error", "Voting has not started yet.");
-            return "message";
-        } else if (status.equals("closed")) {
-            model.addAttribute("error", "Voting is closed. You cannot vote now.");
+        if (!status.equals("open")) {
+            model.addAttribute("error", "Voting is currently not open.");
             return "message";
         }
 

@@ -80,11 +80,15 @@
             color: white;
             border: none;
             cursor: pointer;
-            padding: 10px;
+            padding: 10px; /* Consistent padding for all buttons */
             border-radius: 5px;
-            width: 100%;
+            width: auto; /* Allow width to adjust to content */
             box-sizing: border-box;
             transition: background 0.3s;
+            text-align: center;
+            text-decoration: none; /* Remove underline from anchor */
+            font-size: 14px; /* Consistent font size */
+            margin: 5px 0; /* Add margin for spacing */
         }
 
         .btn:hover {
@@ -213,7 +217,10 @@
 </div>
 
 <div class="top-buttons">
-    <a href="/admin/voters"><button class="btn btn-secondary">View Voter List</button></a>
+    <a href="/admin/votingtime" class="btn">Set Voting Time</a>
+    <a href="/admin/voters" class="btn btn-secondary">View Voter List</a>
+    <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to reset all votes and voter status?')) { document.getElementById('resetVotesForm').submit(); }">Reset All Votes</button>
+    <form id="resetVotesForm" th:action="@{/admin/resetVotes}" method="post" style="display: none;"></form>
 </div>
 
 <h2>Add Candidate</h2>
